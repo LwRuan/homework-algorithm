@@ -1,0 +1,79 @@
+#include 
+#include 
+#include 
+
+
+
+#define M 11
+
+int hash(int key)
+{
+	return key % M;
+}
+
+void init_hash(int* hashtable)
+{
+	int i;
+	for(i = 0; i < M; ++i)
+	{
+		hashtable[i] = -1;
+	}
+}
+
+
+int search_hash(int* hashtable, int key, int* position)
+{
+	int i, h = hash(key);
+	for(i = 0; i < M; ++i)
+	{
+		if(key == hashtable[h])
+		{
+			*position = h;
+			return 1;
+		}
+		if(-1 == hashtable[h])
+		{
+			*position = h;
+			return 0;
+		}
+		h = (h+1) % M;
+	}
+	*position = -1;
+	return -1;
+}
+
+
+int insert_hash(int* hashtable, int key)
+{
+	int position, result;
+	result = search_hash(hashtable, key, &position);
+	if(-1 == result)
+		return 0;
+	hashtable[position] = key;
+	return 1;
+}
+
+void main()
+{
+	int hashtable[M];
+	init_hash(hashtable);
+	srand(time(NULL));
+	int i, j, key;
+	for(i = 0; i < 8; ++i) 	
+	{
+		key = rand() % 50;
+		insert_hash(hashtable, key);
+		printf("Insert %d\n", key);
+		for(j = 0; j < M; ++j)
+			printf("%3d", hashtable[j]);
+		printf("\n");
+	}
+
+	printf("Please input the key to search:\n");
+	scanf("%d", &key);
+	i = search_hash(hashtable, key, &j);
+	if(1 == i)
+		printf("Found!Its index is %d\n", j);
+	else
+		printf("Not found!\n");
+}
